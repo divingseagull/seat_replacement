@@ -18,7 +18,6 @@ for e in group_input.split(','):
     group_names.append(e.strip())
 
 
-
 def extract_data(file):
     reader = csv.DictReader(file)
     result = []
@@ -71,9 +70,3 @@ with open(csv_path, 'r', encoding="UTF-8") as csvfile:
         sql.query("INSERT INTO students VALUES (%s, %s, %s, %s)", value)
 
 print("데이터가 DB에 저장되었습니다.")
-
-
-
-# C:\Users\chaeh\OneDrive\바탕 화면\Project\untitled\original_data.csv
-# 지망 구간을 고르시오.
-# 1 ~ 4, 5 ~ 8, 9 ~ 12, 13 ~ 16, 17 ~ 20, 21 ~ 24, 25 ~ 28, 29 ~ 32, 33 ~ 35
