@@ -56,27 +56,37 @@ class Class:
         :param member_datas: 각 멤버의 데이터
         """
         start_num = 1
-        self.groups: dict[int, SeatGroup] = dict()  # 학급의 구간 딕셔너리
-        # 학급의 멤버 딕셔너리
+        self.groups: dict[int, SeatGroup] = dict()
         self.members: dict[int, list[int | None, int | None, int | None, bool]] = dict()
+
 
         # self.groups 초기화
         divided_num_seats = create_lists(num_seats, divisor)
         for group_id, seats_num in enumerate(divided_num_seats):
             start = divisor * group_id + start_num
             end = start + seats_num
-            d = {group_id: SeatGroup([Seat(seat_id) for seat_id in range(start, end)])}
-            self.groups.update(d)
+            seat_list = [Seat(seat_id) for seat_id in range(start, end)]
+            group_data = {group_id: SeatGroup(seat_list)}
+
+            self.groups.update(group_data)
+
 
         # self.members 초기화
         for row in member_datas:
-            d = {row[0]: [row[1], row[2], row[3], False]}
-            self.members.update(d)
+            member_id = row[0]
+            first = row[1]
+            second = row[2]
+            third = row[3]
+            member_data = {member_id: [first, second, third, False]}
+
+            self.members.update(member_data)
             # 1, 2, 3지망에 지원
             for i in range(1, 4):
                 if row[i] is None:
                     continue
-                self.groups[row[i]].applied[i-1].append(row[0])
+                group_nth_applied = self.groups[row[i]].applied[i-1]
+                group_nth_applied.append(member_id)
+
 
     # 중복 제거
     def remove_duplications(self, target_group_id: int, owners_list: list[int]) -> None:
@@ -94,10 +104,12 @@ class Class:
                             before_removed = group.applied[i].copy()
                             before_removed.append(owner_id)
 
+
     # 구간의 멤버 설정
     def group_set_owners(self, target_group_id: int, owners_list: list[int]) -> None:
         self.groups[target_group_id].owners.extend(owners_list)
         for owner_id in owners_list:
-            self.members[owner_id][3] = True
+            member_data = self.members[owner_id]
+            member_data[3] = True
 
         self.remove_duplications(target_group_id, owners_list)
